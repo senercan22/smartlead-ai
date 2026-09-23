@@ -6,19 +6,21 @@ from app.database import init_db, close_connection
 def create_app(config_name="dev"):
     app = Flask(__name__)
 
-    # Konfigürasyonu yükle
+    # Konfigürasyon
     app.config.from_object(config_by_name.get(config_name, config_by_name["default"]))
 
-    # CORS İzni (Tüm rotalar ve kaynaklar için)
-    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+    # TÜM ORIGIN, METHOD VE HEADER'LARA EKSİKSİZ İZİN VER
+    CORS(app, resources={r"/*": {
+        "origins": "*",
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization", "Accept"]
+    }})
 
-    # Veritabanını başlat
+    # Veritabanı
     init_db(app)
-
-    # İstek bittiğinde veritabanı bağlantısını kapat
     app.teardown_appcontext(close_connection)
 
-    # Blueprint'leri kaydet (main_bp ve api_bp ikisi de eklenmeli)
+    # Blueprint'ler
     from app.routes import main_bp, api_bp
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
