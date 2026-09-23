@@ -5,8 +5,7 @@ from app.database import init_db, close_connection
 
 def create_app(config_name="dev"):
     app = Flask(__name__)
-    
-    # Konfigürasyonu yükle
+   CORS(app, resources={r"/*": {"origins": "*"}}) # Konfigürasyonu yükle
     app.config.from_object(config_by_name.get(config_name, config_by_name["default"]))
 
     # CORS Ayarı
