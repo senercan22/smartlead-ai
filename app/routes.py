@@ -1,5 +1,4 @@
-rom flask import Blueprint, request, jsonify
-
+from flask import Blueprint, request, jsonify
 main_bp = Blueprint('main', __name__)
 api_bp = Blueprint('api', __name__)
 
