@@ -26,6 +26,8 @@ def dashboard():
 
 @api_bp.route('/sohbet', methods=['POST', 'OPTIONS'])
 def sohbet():
+    if request.method == 'OPTIONS':
+        return '', 200
     data = request.get_json() or {}
     mesaj = data.get("mesaj", "").strip()
     gecmis = data.get("gecmis", [])
