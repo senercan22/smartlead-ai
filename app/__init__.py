@@ -3,13 +3,17 @@ from flask_cors import CORS
 from config import config_by_name
 from app.database import init_db, close_connection
 
+
 def create_app(config_name="dev"):
     app = Flask(__name__)
-   CORS(app, resources={r"/*": {"origins": "*"}}) # Konfigürasyonu yükle
-    app.config.from_object(config_by_name.get(config_name, config_by_name["default"]))
+
+    # Konfigürasyonu yükle
+    app.config.from_object(
+        config_by_name.get(config_name, config_by_name["default"])
+    )
 
     # CORS Ayarı
-    CORS(app, resources={r"/api/*": {"origins": app.config.get("CORS_ORIGINS", "*")}})
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     # Veritabanını başlat
     init_db(app)
@@ -19,6 +23,7 @@ def create_app(config_name="dev"):
 
     # Blueprint'leri kaydet
     from app.routes import main_bp, api_bp
+
     app.register_blueprint(api_bp, url_prefix="/api")
     app.register_blueprint(main_bp)
 
