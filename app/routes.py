@@ -13,8 +13,9 @@ def sohbet():
         return jsonify({'status': 'ok'}), 200
 
     try:
+        # Hem JSON hem de Form verisini oku
         data = request.get_json(silent=True) or {}
-        kullanici_mesaji = data.get('mesaj') or data.get('message') or ''
+        kullanici_mesaji = data.get('mesaj') or request.form.get('mesaj') or ''
 
         if not kullanici_mesaji:
             return jsonify({'basari': False, 'hata': 'Mesaj boş olamaz'}), 400
