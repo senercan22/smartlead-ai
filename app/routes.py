@@ -38,7 +38,3 @@ def sohbet():
         response = jsonify({'basari': False, 'hata': str(e)})
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response, 500
-        return jsonify({'basari': True, 'cevap': cevap}), 200
-
-    except Exception as e:
-        return jsonify({'basari': False, 'hata': str(e)}), 500
