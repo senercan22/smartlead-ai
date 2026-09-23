@@ -24,7 +24,7 @@ def dashboard():
 
 # --- API ROTALARI ---
 
-@api_bp.route("/sohbet", methods=["POST"])
+@api_bp.route('/sohbet', methods=['POST', 'OPTIONS'])
 def sohbet():
     data = request.get_json() or {}
     mesaj = data.get("mesaj", "").strip()
