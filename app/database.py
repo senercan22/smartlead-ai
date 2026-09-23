@@ -1,0 +1,53 @@
+import sqlite3
+from flask import g
+
+DATABASE = "smartlead.db"
+
+def get_db():
+    """Veritabanı bağlantısı oluşturur ve satırlara sütun adıyla erişim sağlar."""
+    db = getattr(g, "_database", None)
+    if db is None:
+        db = g._database = sqlite3.connect(DATABASE)
+        db.row_factory = sqlite3.Row
+    return db
+
+def close_connection(exception=None):
+    """İstek bittiğinde veritabanı bağlantısını kapatır."""
+    db = getattr(g, "_database", None)
+    if db is not None:
+        db.close()
+
+def init_db(app):
+    """'leads' tablosunu otomatik oluşturur (yoksa)."""
+    with app.app_context():
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS leads (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                isim TEXT NOT NULL,
+                telefon TEXT NOT NULL,
+                mesaj TEXT,
+                tarih TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        db.commit()
+
+def lead_ekle(isim, telefon, mesaj=""):
+    """Güvenli SQL yer tutucusu (?) kullanarak yeni kayıt ekler."""
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+        "INSERT INTO leads (isim, telefon, mesaj) VALUES (?, ?, ?)",
+        (isim, telefon, mesaj)
+    )
+    db.commit()
+    return cursor.lastrowid
+
+def tum_leadler():
+    """Tüm kayıtları en yeniden eskiye doğru listeler."""
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT id, isim, telefon, mesaj, tarih FROM leads ORDER BY id DESC")
+    rows = cursor.fetchall()
+    return [dict(row) for row in rows]
