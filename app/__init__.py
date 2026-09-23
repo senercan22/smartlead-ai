@@ -9,7 +9,7 @@ def create_app(config_name="dev"):
     # Konfigürasyonu yükle
     app.config.from_object(config_by_name.get(config_name, config_by_name["default"]))
 
-    # TÜM ROTALAR VE METHODLAR İÇİN CORS İZNİ
+    # CORS İzni (Tüm rotalar ve kaynaklar için)
     CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
     # Veritabanını başlat
@@ -18,8 +18,9 @@ def create_app(config_name="dev"):
     # İstek bittiğinde veritabanı bağlantısını kapat
     app.teardown_appcontext(close_connection)
 
-    # Blueprint'leri kaydet
+    # Blueprint'leri kaydet (main_bp ve api_bp ikisi de eklenmeli)
     from app.routes import main_bp, api_bp
+    app.register_blueprint(main_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
 
     return app
