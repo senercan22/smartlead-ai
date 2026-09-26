@@ -7,7 +7,6 @@ api_bp = Blueprint('api', __name__)
 def health_check():
     return jsonify({'status': 'healthy'}), 200
 
-# Wix ve tüm sitelerden gelen isteklere tam izin veren sohbet uç noktası
 @api_bp.route('/sohbet', methods=['POST', 'OPTIONS'])
 def sohbet():
     if request.method == 'OPTIONS':
@@ -24,8 +23,7 @@ def sohbet():
         if not kullanici_mesaji:
             return jsonify({'basari': False, 'hata': 'Mesaj boş olamaz'}), 400
 
-        # Yapay zeka yanıt simülasyonu veya gerçek model yanıtı
-        cevap = f"SmartLearner AI Yanıtı: '{kullanici_mesaji' mesajınızı aldım."
+        cevap = f"SmartLead AI: Mesajınız alındı -> {kullanici_mesaji}"
 
         response = jsonify({'basari': True, 'cevap': cevap})
         response.headers.add("Access-Control-Allow-Origin", "*")
