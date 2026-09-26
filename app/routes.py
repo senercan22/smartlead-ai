@@ -11,7 +11,7 @@ def home():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SmartLead AI Temsilcisi</title>
+        <title>ADSC Temsilcisi</title>
         <style>
             body { font-family: Arial, sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
             .chat-container { width: 100%; max-width: 400px; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; height: 500px; }
@@ -27,7 +27,7 @@ def home():
     </head>
     <body>
     <div class="chat-container">
-        <div class="chat-header">SmartLead AI Temsilcisi</div>
+        <div class="chat-header">ADSC Temsilcisi</div>
         <div id="chatLog" class="chat-log">
             <div class="message bot">Merhaba! Size nasıl yardımcı olabilirim?</div>
         </div>
@@ -49,7 +49,7 @@ def home():
             btn.innerText = "...";
             btn.disabled = true;
             try {
-                const res = await fetch("/api/sohbet", {
+                const res = await fetch("https://smartlead-ai-l25b.onrender.com/api/sohbet", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ mesaj: text })
@@ -99,11 +99,11 @@ def sohbet():
         elif any(kelime in kullanici_mesaji for kelime in ['iletişim', 'ulaş', 'telefon', 'mail', 'adres', 'teklif']):
             cevap = "Bizimle iletişime geçmek ve projeniz için teklif almak adına sitemizin üst kısmındaki 'Share Your Idea' butonunu kullanabilir veya doğrudan iletişim sayfamızdan bize yazabilirsiniz!"
         elif any(kelime in kullanici_mesaji for kelime in ['merhaba', 'selam', 'hey', 'iyi günler']):
-            cevap = "Merhaba! ADSC Creative yapay zeka asistanına hoş geldiniz. Size ajansımız ve hizmetlerimiz hakkında nasıl yardımcı olabilirim?"
+            cevap = "Merhaba! Ben ADSC Temsilcisi. Size ajansımız ve hizmetlerimiz hakkında nasıl yardımcı olabilirim?"
         elif any(kelime in kullanici_mesaji for kelime in ['kimsin', 'sen kimsin', 'adsc']):
-            cevap = "Ben ADSC Creative'in dijital asistanıyım. Markanızın yaratıcı süreçlerinde size rehberlik etmek için buradayım."
+            cevap = "Ben ADSC Creative'in resmi yapay zeka temsilcisiyim. Markanızın yaratıcı süreçlerinde size rehberlik etmek için buradayım."
         else:
-            cevap = f"ADSC Creative Asistanı: '{kullanici_mesaji}' ile ilgili detaylı bilgiyi ekibimizle görüşerek öğrenebilirsiniz. Size başka nasıl yardımcı olabilirim?"
+            cevap = f"ADSC Temsilcisi: '{kullanici_mesaji}' ile ilgili detaylı bilgiyi ekibimizle görüşerek öğrenebilirsiniz. Size başka nasıl yardımcı olabilirim?"
 
         response = jsonify({'basari': True, 'cevap': cevap})
         response.headers.add("Access-Control-Allow-Origin", "*")
