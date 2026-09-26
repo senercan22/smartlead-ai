@@ -7,22 +7,31 @@ api_bp = Blueprint('api', __name__)
 def health_check():
     return jsonify({'status': 'healthy'}), 200
 
+# Wix ve tüm sitelerden gelen isteklere tam izin veren sohbet uç noktası
 @api_bp.route('/sohbet', methods=['POST', 'OPTIONS'])
 def sohbet():
     if request.method == 'OPTIONS':
-        return jsonify({'status': 'ok'}), 200
+        response = jsonify({'status': 'ok'})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST,OPTIONS")
+        return response, 200
 
     try:
-        # Hem JSON hem de Form verisini oku
         data = request.get_json(silent=True) or {}
-        kullanici_mesaji = data.get('mesaj') or request.form.get('mesaj') or ''
+        kullanici_mesaji = data.get('mesaj') or data.get('message') or ''
 
         if not kullanici_mesaji:
             return jsonify({'basari': False, 'hata': 'Mesaj boş olamaz'}), 400
 
-        cevap = f"SmartLead AI: Mesajınız alındı -> {kullanici_mesaji}"
+        # Yapay zeka yanıt simülasyonu veya gerçek model yanıtı
+        cevap = f"SmartLearner AI Yanıtı: '{kullanici_mesaji' mesajınızı aldım."
 
-        return jsonify({'basari': True, 'cevap': cevap}), 200
+        response = jsonify({'basari': True, 'cevap': cevap})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response, 200
 
     except Exception as e:
-        return jsonify({'basari': False, 'hata': str(e)}), 500
+        response = jsonify({'basari': False, 'hata': str(e)})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response, 500
