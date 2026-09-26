@@ -88,12 +88,22 @@ def sohbet():
 
     try:
         data = request.get_json(silent=True) or {}
-        kullanici_mesaji = data.get('mesaj') or data.get('message') or ''
+        kullanici_mesaji = (data.get('mesaj') or data.get('message') or '').lower().strip()
 
         if not kullanici_mesaji:
             return jsonify({'basari': False, 'hata': 'Mesaj boş olamaz'}), 400
 
-        cevap = f"SmartLead AI Yanıtı: '{kullanici_mesaji}' mesajınızı aldım."
+        # ADSC Creative Akıllı Yanıt Mantığı
+        if any(kelime in kullanici_mesaji for kelime in ['hizmet', 'ne yapıyorsunuz', 'hizmetleriniz', 'ajans']):
+            cevap = "ADSC Creative olarak markanızı dijital dünyada öne taşımak için; yaratıcı reklam kampanyaları, marka kimliği tasarımı, web geliştirme ve dijital pazarlama çözümleri sunuyoruz."
+        elif any(kelime in kullanici_mesaji for kelime in ['iletişim', 'ulaş', 'telefon', 'mail', 'adres', 'teklif']):
+            cevap = "Bizimle iletişime geçmek ve projeniz için teklif almak adına sitemizin üst kısmındaki 'Share Your Idea' butonunu kullanabilir veya doğrudan iletişim sayfamızdan bize yazabilirsiniz!"
+        elif any(kelime in kullanici_mesaji for kelime in ['merhaba', 'selam', 'hey', 'iyi günler']):
+            cevap = "Merhaba! ADSC Creative yapay zeka asistanına hoş geldiniz. Size ajansımız ve hizmetlerimiz hakkında nasıl yardımcı olabilirim?"
+        elif any(kelime in kullanici_mesaji for kelime in ['kimsin', 'sen kimsin', 'adsc']):
+            cevap = "Ben ADSC Creative'in dijital asistanıyım. Markanızın yaratıcı süreçlerinde size rehberlik etmek için buradayım."
+        else:
+            cevap = f"ADSC Creative Asistanı: '{kullanici_mesaji}' ile ilgili detaylı bilgiyi ekibimizle görüşerek öğrenebilirsiniz. Size başka nasıl yardımcı olabilirim?"
 
         response = jsonify({'basari': True, 'cevap': cevap})
         response.headers.add("Access-Control-Allow-Origin", "*")
