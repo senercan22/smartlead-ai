@@ -77,7 +77,8 @@ def home():
 def health_check():
     return jsonify({'status': 'healthy'}), 200
 
-def handle_sohbet():
+@api_bp.route('/sohbet', methods=['POST', 'OPTIONS'])
+def sohbet():
     if request.method == 'OPTIONS':
         response = jsonify({'status': 'ok'})
         response.headers.add("Access-Control-Allow-Origin", "*")
@@ -102,9 +103,3 @@ def handle_sohbet():
         response = jsonify({'basari': False, 'hata': str(e)})
         response.headers.add("Access-Control-Allow-Origin", "*")
         return response, 500
-
-# Rota çakışmasını önlemek için hem main hem api blueprint'lerine bağlıyoruz
-main_bp.add_url_rule('/api/sohbet', view_func=handle_sohbet, methods=['POST', 'OPTIONS'])
-main_bp.add_url_rule('/sohbet', view_func=handle_sohbet, methods=['POST', 'OPTIONS'])
-api_bp.add_url_rule('/sohbet', view_func=handle_sohbet, methods=['POST', 'OPTIONS'])
-api_bp.add_url_rule('/api/sohbet', view_func=handle_sohbet, methods=['POST', 'OPTIONS
