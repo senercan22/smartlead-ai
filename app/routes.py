@@ -1,12 +1,77 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, request, jsonify
 
-# Projenin ana yapısının aradığı hem main_bp hem api_bp tanımlarını yapıyoruz
 main_bp = Blueprint('main', __name__)
 api_bp = Blueprint('api', __name__)
 
 @main_bp.route('/', methods=['GET'])
 def home():
-    return render_template('index.html')
+    return """
+    <!DOCTYPE html>
+    <html lang="tr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SmartLead AI Temsilcisi</title>
+        <style>
+            body { font-family: Arial, sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+            .chat-container { width: 100%; max-width: 400px; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; height: 500px; }
+            .chat-header { background: #000; color: #fff; padding: 15px; font-weight: bold; text-align: center; }
+            .chat-log { flex: 1; padding: 15px; overflow-y: auto; background: #fafafa; display: flex; flex-direction: column; gap: 10px; }
+            .message { padding: 10px 14px; border-radius: 10px; max-width: 80%; font-size: 14px; line-height: 1.4; }
+            .user { background: #007bff; color: #fff; align-self: flex-end; }
+            .bot { background: #e9ecef; color: #333; align-self: flex-start; }
+            .chat-input-area { display: flex; padding: 10px; background: #fff; border-top: 1px solid #ddd; }
+            .chat-input-area input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px; outline: none; font-size: 14px; }
+            .chat-input-area button { background: #000; color: #fff; border: none; padding: 0 18px; margin-left: 8px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        </style>
+    </head>
+    <body>
+    <div class="chat-container">
+        <div class="chat-header">SmartLead AI Temsilcisi</div>
+        <div id="chatLog" class="chat-log">
+            <div class="message bot">Merhaba! Size nasıl yardımcı olabilirim?</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="userMsg" placeholder="Mesajınızı yazın..." onkeypress="if(event.key==='Enter') sendMsg()" />
+            <button onclick="sendMsg()" id="sendBtn">Gönder</button>
+        </div>
+    </div>
+    <script>
+        async function sendMsg() {
+            const input = document.getElementById("userMsg");
+            const log = document.getElementById("chatLog");
+            const btn = document.getElementById("sendBtn");
+            const text = input.value.trim();
+            if (!text) return;
+            log.innerHTML += `<div class="message user">${text}</div>`;
+            input.value = "";
+            log.scrollTop = log.scrollHeight;
+            btn.innerText = "...";
+            btn.disabled = true;
+            try {
+                const res = await fetch("/api/sohbet", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ mesaj: text })
+                });
+                const data = await res.json();
+                if (data.basari) {
+                    log.innerHTML += `<div class="message bot">${data.cevap}</div>`;
+                } else {
+                    log.innerHTML += `<div class="message bot" style="color:red;">Hata: ${data.hata}</div>`;
+                }
+            } catch (e) {
+                log.innerHTML += `<div class="message bot" style="color:red;">Bağlantı hatası!</div>`;
+            } finally {
+                btn.innerText = "Gönder";
+                btn.disabled = false;
+                log.scrollTop = log.scrollHeight;
+            }
+        }
+    </script>
+    </body>
+    </html>
+    """
 
 @main_bp.route('/health', methods=['GET'])
 def health_check():
@@ -28,7 +93,7 @@ def sohbet():
         if not kullanici_mesaji:
             return jsonify({'basari': False, 'hata': 'Mesaj boş olamaz'}), 400
 
-        cevap = f"SmartLead AI: Mesajınız alındı -> {kullanici_mesaji}"
+        cevap = f"SmartLead AI Yanıtı: '{kullanici_mesaji}' mesajınızı aldım."
 
         response = jsonify({'basari': True, 'cevap': cevap})
         response.headers.add("Access-Control-Allow-Origin", "*")
