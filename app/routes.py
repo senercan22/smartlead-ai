@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request, jsonify
 
+# Projenin ana yapısının aradığı hem main_bp hem api_bp tanımlarını yapıyoruz
 main_bp = Blueprint('main', __name__)
+api_bp = Blueprint('api', __name__)
 
 @main_bp.route('/', methods=['GET'])
 def home():
@@ -10,7 +12,7 @@ def home():
 def health_check():
     return jsonify({'status': 'healthy'}), 200
 
-@main_bp.route('/api/sohbet', methods=['POST', 'OPTIONS'])
+@api_bp.route('/sohbet', methods=['POST', 'OPTIONS'])
 def sohbet():
     if request.method == 'OPTIONS':
         response = jsonify({'status': 'ok'})
