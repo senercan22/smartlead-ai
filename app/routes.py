@@ -34,3 +34,6 @@ def sohbet():
         response = jsonify({'basari': False, 'hata': str(e)})
         response.headers.add("Access-Control-Allow-Origin", "*")
         return response, 500
+@main_bp.route('/')
+def home():
+    return render_template('index.html')
