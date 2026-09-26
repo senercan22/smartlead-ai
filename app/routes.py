@@ -1,14 +1,16 @@
-from flask import render_template
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, render_template, request, jsonify
 
 main_bp = Blueprint('main', __name__)
-api_bp = Blueprint('api', __name__)
+
+@main_bp.route('/', methods=['GET'])
+def home():
+    return render_template('index.html')
 
 @main_bp.route('/health', methods=['GET'])
 def health_check():
     return jsonify({'status': 'healthy'}), 200
 
-@api_bp.route('/sohbet', methods=['POST', 'OPTIONS'])
+@main_bp.route('/api/sohbet', methods=['POST', 'OPTIONS'])
 def sohbet():
     if request.method == 'OPTIONS':
         response = jsonify({'status': 'ok'})
@@ -34,6 +36,3 @@ def sohbet():
         response = jsonify({'basari': False, 'hata': str(e)})
         response.headers.add("Access-Control-Allow-Origin", "*")
         return response, 500
-@main_bp.route('/')
-def home():
-    return render_template('index.html')
